@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adivina el número</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="initial-background">
+    <div class="container">
+        <h1>Adivina el número</h1>
+
+        <form id="roleForm" class="form">
+            <label for="role">Elige tu rol:</label>
+            <select id="role" name="role">
+                <option value="creador">Creador</option>
+                <option value="adivinador">Adivinador</option>
+            </select>
+            <button type="submit">Seleccionar Rol</button>
+        </form>
+
+        <form id="creadorForm" class="form" style="display:none;">
+            <label for="numeroCrear">Introduce un número para adivinar:</label>
+            <input type="number" id="numeroCrear" name="numeroCrear" min="1" max="100">
+            <label for="nombreCrear">Ingresa tu nombre:</label>
+            <input type="text" id="nombreCrear" name="nombreCrear">
+            <button type="submit">Establecer Número</button>
+        </form>
+
+        <form id="adivinadorForm" class="form" style="display:none;">
+            <label for="numeroAdivinar">Introduce tu número:</label>
+            <input type="number" id="numeroAdivinar" name="numeroAdivinar" min="1" max="100">
+            <label for="nombreAdivinar">Ingresa tu nombre:</label>
+            <input type="text" id="nombreAdivinar" name="nombreAdivinar">
+            <button type="submit">Adivinar</button>
+        </form>
+
+        <div id="notifications-container"></div>
+        <div id="messages-container"></div>
+        <p id="resultado"></p>
+    </div>
+
+    <script>
+        let eventSource;
+        const connect = () => {
+            eventSource = new EventSource('http://localhost:3000/events');
+            eventSource.onopen = () => {
+                alert('Conexión establecida con el servidor.');
+            };
+            eventSource.onerror = () => {
+                alert('Se ha perdido la conexión con el servidor. Reintentando en 10 segundos...');
+                eventSource.close();
+                setTimeout(connect, 10000);
+            };
+
+            let notificationCount = 0;
+            let messageCount = 0;
+
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.tipo === 'notificacion') {
+                    notificationCount++;
+                    const notification = document.createElement('div');
+                    notification.className = 'notification';
+                    notification.innerText = `Notification ${notificationCount}: ${data.mensaje}`;
+                    document.getElementById('notifications-container').appendChild(notification);
+                } else if (data.tipo === 'mensaje') {
+                    messageCount++;
+                    const message = document.createElement('div');
+                    message.className = 'message';
+                    message.innerText = `Message ${messageCount}: ${data.mensaje}`;
+                    document.getElementById('messages-container').appendChild(message);
+                }
+            };
+        };
+
+        connect();
+
+        document.getElementById('roleForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const role = document.getElementById('role').value;
+
+            if (role === 'creador') {
+                document.body.classList.remove('initial-background');
+                document.body.classList.add('creator-background');
+                document.getElementById('roleForm').style.display = 'none';
+                document.getElementById('creadorForm').style.display = 'block';
+            } else if (role === 'adivinador') {
+                document.body.classList.remove('initial-background');
+                document.body.classList.add('guesser-background');
+                document.getElementById('roleForm').style.display = 'none';
+                document.getElementById('adivinadorForm').style.display = 'block';
+            }
+        });
+
+        document.getElementById('creadorForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const numeroCrear = document.getElementById('numeroCrear').value;
+            const nombreCrear = document.getElementById('nombreCrear').value;
+
+            fetch('http://localhost:3000/creador', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ numero: parseInt(numeroCrear), nombre: nombreCrear })
+            });
+        });
+
+        document.getElementById('adivinadorForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const numeroAdivinar = document.getElementById('numeroAdivinar').value;
+            const nombreAdivinar = document.getElementById('nombreAdivinar').value;
+
+            fetch('http://localhost:3000/adivinador', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ numero: parseInt(numeroAdivinar), nombre: nombreAdivinar })
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+body.initial-background {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  transition: background-color 0.5s;
+}
+
+body.creator-background {
+  background-color: #1976d2; /* Azul */
+}
+
+body.guesser-background {
+  background-color: #ff9800; /* Naranja */
+}
+
+.container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: background-color 0.5s;
+}
+
+h1 {
+  color: #333333;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+label {
+  margin-bottom: 5px;
+  color: #666666;
+  font-size: 1.2em;
+}
+
+input, select, button {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 1.2em;
+  border: 2px solid #cccccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #ff7e5f;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #feb47b;
+}
+
+.notification, .message {
+  border: 1px solid #000000;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  font-size: 1.1em;
+}
+
+.notification {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.message {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+#resultado {
+  font-size: 1.5em;
+  color: #333333;
+}
